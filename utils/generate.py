@@ -1,7 +1,8 @@
-from models import Status, User, Product, Order, OrderDetails, ProductCategory
-import generate_utils as generate_utils
+from utils.models import Status, User, Product, Order, OrderDetails, ProductCategory
+import utils.generate_utils as generate_utils
 import random
-from db_utils import insert_records, insert_record, get_one_record, get_one_record_id, get_records
+from typing import Tuple, List
+from utils.db_utils import insert_records, insert_record, get_one_record, get_one_record_id, get_records
 
 
 
@@ -44,7 +45,7 @@ def insert_constants():
     insert_records(categories)
     insert_records(order_statuses)
 
-def generate_order():
+def generate_order() -> Tuple[Order, List[OrderDetails]]:
     total_amount = 0
     products_count = random.randint(1, MAX_PRODUCTS_IN_ORDER)
     products_in_order = get_records(Product, products_count)
@@ -62,7 +63,6 @@ def generate_order():
     validate = Order.model_validate
     generate = generate_utils.generate_order
     order = validate(generate(user_id=user_id, status_id=status_id, total_amount=total_amount, delivered=delivered))
-    # insert_record(order)
 
     validate = OrderDetails.model_validate
     generate = generate_utils.generate_order_details
@@ -75,11 +75,15 @@ def generate_order():
         order_detail = validate(generate(order_id=None, product_id=product.id, quantity=quantity, price_per_unit=product.price, total_price=total_price))
         order_details.append(order_detail)
 
-    # insert_records(order_details)
-    
     return order, order_details
 
 
-# insert_constants()
-order, order_details = generate_order()
-print (generate_order())
+def insert_order_with_details():
+    order, order_details = generate_order()
+    order_id = insert_record(order)
+
+    for detail in order_details:
+        detail.order_id = order_id
+    
+    insert_records(order_details)
+    

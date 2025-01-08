@@ -43,7 +43,6 @@ def generate_order(id=None, user_id=0, total_amount=0, status_id=0, delivered=Fa
         'id': id,
         'user_id': user_id,
         'creation_date': creation_date,
-        # 'creation_date': fake.date_time_between(start_date=datetime(2024, 1, 1)).isoformat(),
         'total_amount': total_amount,
         'status': status_id,
         'delivery_date': delivery_date

@@ -47,11 +47,5 @@ class Status(SQLModel, table=True):
 
 
 def create_tables():
-    engine = create_engine("postgresql://admin:admin@localhost/orders")
+    engine = create_engine("postgresql://admin:admin@postgres/orders")
     SQLModel.metadata.create_all(engine)
-
-# print(User.model_va_idate(generate_utils.generate_user()))
-# print(Product.model_va_idate(generate_utils.generate_product()))
-# print(Order.model_va_idate(generate_utils.generate_order()))
-# print(OrderDetails.model_va_idate(generate_utils.generate_order_details()))
-# print(ProductCategory.model_va_idate(generate_utils.generate_product_category()))
