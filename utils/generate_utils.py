@@ -18,12 +18,12 @@ def generate_user(id=None, loyalty_status="Base"):
         'loyalty_status': loyalty_status
     }
 
-def generate_product(id=None, category_id=None):
+def generate_product(category_id, id=None):
     return {
         'id': id,
         'name': fake.word(),
         'description': fake.sentence(nb_words=10),
-        'category_id': category_id or random.randint(1, 100),
+        'category_id': category_id,
         'price': random.randint(100, 10000),
         'stock_quantity': random.randint(1, 500),
         'creation_date': fake.date_time_between(start_date=datetime(2023, 1, 1))

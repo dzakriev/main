@@ -2,8 +2,7 @@ from utils.models import Status, User, Product, Order, OrderDetails, ProductCate
 import utils.generate_utils as generate_utils
 import random
 from typing import Tuple, List
-from utils.db_utils import insert_records, insert_record, get_one_record, get_one_record_id, get_records
-
+from utils.db_utils import insert_records, insert_record, get_one_record_id, get_records
 
 
 USERS_COUNT = 50
@@ -23,26 +22,29 @@ def generate_constants():
     validate = User.model_validate
     generate = generate_utils.generate_user
     users = [validate(generate(loyalty_status=random.choice(LOYALTY_STATUSES))) for _ in range(USERS_COUNT)]
-    
-    validate = Product.model_validate
-    generate = generate_utils.generate_product
-    products = [validate(generate()) for _ in range(PRODUCTS_COUNT)]
 
     validate = ProductCategory.model_validate
     generate = generate_utils.generate_product_category
     categories = []
     categories.append(validate(generate(parent_id=None)))
-    for i in range(1, CATEGORIES_COUNT-1):
-        parent_id = None if random.random() < PARENTLESS_CATEGORY_CHANCE else random.randint(0, i-1)
+    for i in range(2, CATEGORIES_COUNT):
+        parent_id = None if random.random() < PARENTLESS_CATEGORY_CHANCE else random.randint(1, i-1)
         categories.append(validate(generate(parent_id=parent_id)))
+
+    for category in categories:
+        print(category)
+
+    validate = Product.model_validate
+    generate = generate_utils.generate_product
+    products = [validate(generate(category_id=random.randint(1, CATEGORIES_COUNT))) for _ in range(PRODUCTS_COUNT)]
 
     return users, products, categories, order_statuses
 
 def insert_constants():
     users, products, categories, order_statuses = generate_constants()
     insert_records(users)
-    insert_records(products)
     insert_records(categories)
+    insert_records(products)
     insert_records(order_statuses)
 
 def generate_order() -> Tuple[Order, List[OrderDetails]]:

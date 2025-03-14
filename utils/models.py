@@ -46,6 +46,5 @@ class Status(SQLModel, table=True):
     name: str
 
 
-def create_tables():
-    engine = create_engine("postgresql://admin:admin@postgres/orders")
+def create_tables(engine):
     SQLModel.metadata.create_all(engine)

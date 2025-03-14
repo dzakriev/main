@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import func
 from sqlmodel import Session, SQLModel, select, create_engine
 from utils.models import create_tables, User, Product, ProductCategory, Order, OrderDetails, Status
@@ -5,16 +6,18 @@ from typing import List
 from datetime import datetime
 
 
+url = os.environ.get("DATABASE_URL", "postgresql://admin:admin@postgres:5432/orders")
+
 def get_engine():
-    return create_engine("postgresql://admin:admin@postgres:5432/orders")
+    return create_engine(url)
 
 engine = get_engine()
 
 
 def init_db():
-    create_tables()
+    create_tables(engine)
 
-def insert_records(records):
+def insert_records(records: List[SQLModel]):
     with(Session(engine)) as session:
         for record in records:
             session.add(record)
@@ -50,7 +53,7 @@ def get_records(table: SQLModel, limit=1):
         records = session.exec(statement).all()
         return records
     
-def get_all_records(table: SQLModel, limit=1):
+def get_all_records(table: SQLModel):
     with Session(engine) as session:
         statement = select(table)
         records = session.exec(statement).all()
@@ -72,3 +75,7 @@ def convert_datetime(data):
         return data.isoformat()
     else:
         return data
+
+
+def fetch_data_from_psql(table: SQLModel):
+    return get_all_records(table)
